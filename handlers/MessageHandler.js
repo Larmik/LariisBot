@@ -6,18 +6,6 @@ let CommandsGuildMessage = new Discord.Collection();
 let client = null;
 
 async function handleCommands(message) {
-    if (message.content == '_dispos') {
-        let args = message.content.slice(process.env.PREFIX.length).split(' ');
-        let command = args.shift().toLowerCase();
-        CommandsGuildMessage.forEach((value) => {
-            console.log(value.name);
-            console.log(value.alt)
-            console.log(command);
-            if (command == value.name || value.alt.includes(command)) {
-                value.execute(message, args);
-            }
-        });
-    }
 
     if (message.content.startsWith('_createlu')) {
         let args = message.content.slice(process.env.PREFIX.length).split(' ');

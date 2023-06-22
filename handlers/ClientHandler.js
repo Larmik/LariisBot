@@ -3,6 +3,8 @@ const fs = require('fs');
 
 const MessageHandler = require('./MessageHandler');
 const ReactionHandler = require('./ReactionHandler');
+const FirebaseHandler = require('./FirebaseHandler');
+
 
 let client = null;
 
@@ -39,6 +41,7 @@ module.exports = {
         });
         MessageHandler.Initialize(discordClient);
         ReactionHandler.Initialize(discordClient);
+        FirebaseHandler.Initialize(discordClient);
     },
 
     Login: () => {

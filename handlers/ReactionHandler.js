@@ -10,7 +10,6 @@ let client = null;
  * @param {Discord.User|Discord.PartialUser} user 
  */
 async function handleReactions(reaction, user) {
-    console.log('Reaction is detected');
     if (reaction.partial) {
         try {
             await reaction.fetch();

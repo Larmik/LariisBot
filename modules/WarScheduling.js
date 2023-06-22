@@ -1,5 +1,4 @@
 const fs = require('fs');
-const { getRandomColor } = require('./ColorHelper');
 
 function getData(message) {
     let rawdata = fs.readFileSync(process.env.DIR_WORKING + process.env.DIR_SPLIT + 'scheduleTemp' + process.env.DIR_SPLIT + message.guild.id + process.env.DIR_SPLIT + message.channel.id + process.env.DIR_SPLIT 
@@ -9,11 +8,11 @@ function getData(message) {
 
 function writeData(message, data) {
     let rawdata = JSON.stringify(data);
-    fs.writeFileSync(process.env.DIR_WORKING + process.env.DIR_SPLIT + 'scheduleTemp' + process.env.DIR_SPLIT + message.guild.id + process.env.DIR_SPLIT + message.channel.id + process.env.DIR_SPLIT 
-    + message.id + '.json', rawdata);
+    fs.writeFileSync(process.env.DIR_WORKING + process.env.DIR_SPLIT + 'scheduleTemp' + process.env.DIR_SPLIT + message.guild.id + process.env.DIR_SPLIT + message.channel.id + process.env.DIR_SPLIT + message.id + '.json', rawdata);
+    //TODO écrire les dispos sur firebase
 }
 
-function buildMessage(message, data, isOld = false) {
+function buildMessage(data) {
     let msgData = [];
     let canCount = 0;
     if (data.CAN.length > 0) {
@@ -69,10 +68,8 @@ function buildMessage(message, data, isOld = false) {
         msgData.push({ name: "❌ Dropped (" + data.DROPPED.length + ")", value: droppedStr });
     }
 
-    let colorCode = getRandomColor(((data.format == 24 ? (data.rawTime.replace(/:/g, '.')) : (data.clockDiscriminator == 'PM' ? (data.rawTime.replace(/:/g, '.')) * 2 : (data.rawTime.replace(/:/g, '.')))) + new Date().getDate()), message.guild, message.channel);
     return {
-        color: colorCode,
-        title: '**Dispos ' + (data.rawTime + ' ' + data.clockDiscriminator).trim() + 'h** ' + ((canCount >= 3 && canCount < 6) ? '(+' + (6 - canCount).toString() + ')' : '') + (isOld == true ? '- old' : ''),
+        title: '**Dispos ' + data.time + 'h** ' + ((canCount >= 3 && canCount < 6) ? '(+' + (6 - canCount).toString() + ')' : ''),
         fields: msgData
     };
 }
@@ -86,7 +83,7 @@ function getIndex (arr, id) {
     return -1;
 }
 
-function removeFromData(data, user, para, message) {
+function removeFromData(data, user, para) {
     if (para.includes('CAN')) {
         let index = getIndex(data.CAN, user.id);
         if (index > -1) {
@@ -173,8 +170,8 @@ function getIsDropped(data, userId) {
 }
 
 module.exports = {
-    getMessage: (message, isOld = false) => {
-        return buildMessage(message, getData(message), isOld);
+    getMessage: (message) => {
+        return buildMessage(getData(message));
     },
 
     addCan: (message, user) => {
@@ -209,7 +206,7 @@ module.exports = {
         }
 
         writeData(message, data);
-        message.edit({embeds: [buildMessage(message, data)]});
+        message.edit({embeds: [buildMessage(data)]});
     },
 
     addSub: (message, user) => {
@@ -244,7 +241,7 @@ module.exports = {
         }
 
         writeData(message, data);
-        message.edit({embeds: [buildMessage(message, data)]});
+        message.edit({embeds: [buildMessage(data)]});
     },
 
     addNotSure: (message, user) => {
@@ -291,7 +288,7 @@ module.exports = {
         }
 
         writeData(message, data);
-        message.edit({embeds: [buildMessage(message, data)]});
+        message.edit({embeds: [buildMessage(data)]});
     },
 
     addCant: (message, user) => {
@@ -349,13 +346,13 @@ module.exports = {
         }
 
         writeData(message, data);
-        message.edit({embeds: [buildMessage(message, data)]});
+        message.edit({embeds: [buildMessage(data)]});
     },
 
     removeEntry: (message, user) => {
         let data = getData(message);
         data = removeFromData(data, user, ['CAN', 'CANT', 'SUB', 'NOTSURE', 'DROPPED'], message);
         writeData(message, data);
-        message.edit({embeds: [buildMessage(message, data)]});
+        message.edit({embeds: [buildMessage(data)]});
     }
 }
