@@ -1,19 +1,17 @@
 const Discord = require("discord.js");
 const Schedule = require("./WarScheduling");
 const fs = require("fs");
-
 const { initializeApp } = require("firebase/app");
 const { getDatabase, ref, onValue, set } = require("firebase/database");
 const firebaseConfig = {
-  apiKey: "AIzaSyBIH6XdclkrvXYGJzImA7wTA-vmU8n4_eI",
-  authDomain: "stats-mk.firebaseapp.com",
-  databaseURL:
-    "https://stats-mk-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId: "stats-mk",
-  storageBucket: "stats-mk.appspot.com",
-  messagingSenderId: "527204567365",
-  appId: "1:527204567365:web:32e2bbd5732d753f70162c",
-  measurementId: "G-MEKDPDHGT2",
+  apiKey: process.env.FIREBASE_API_KEY,
+  authDomain: process.env.FIREBASE_AUTH_DOMAIN,
+  databaseURL: process.env.FIREBASE_DB_URL,
+  projectId: process.env.FIREBASE_PROJECT_ID,
+  storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.FIREBASE_APP_ID,
+  measurementId: process.env.FIREBASE_MEASUREMENT_ID
 };
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
@@ -40,13 +38,14 @@ function getData(message) {
  * @param {Discord.User} user
  */
 function writeDispo(reaction, user) {
-  console.log("Write dispo begin");
+
   let msg = getData(reaction.message);
   let userDiscordId = user.id;
   let dispoHour = msg.time;
   let reactionIndex;
   let dispoIndex;
   let oldDispoIndex;
+  let finalUsers = [];
 
   switch (dispoHour) {
     case "18":
@@ -64,7 +63,6 @@ function writeDispo(reaction, user) {
     case "23":
       dispoIndex = "4";
       break;
-
     default:
       break;
   }
@@ -83,51 +81,32 @@ function writeDispo(reaction, user) {
       reactionIndex = 2;
       break;
   }
-  let finalUsers = [];
-  onValue(
-    ref(db, "/users"),
-    (snapshot) => {
-      console.log("get users");
+  
+  onValue(ref(db, "/users"),(snapshot) => {
       const obj = snapshot.val();
       if (obj) {
-        console.log("get users OK");
         for (let userId of Object.keys(obj)) {
           var user = obj[userId];
           finalUsers.push(user);
           if (user.discordId == userDiscordId) {
-            console.log("user has discord id");
-            onValue(
-              ref(db, "dispos/1643723546718"),
-              (snapshot) => {
-                console.log("get dispos");
+            onValue(ref(db, "dispos/1643723546718"),(snapshot) => {
                 const data = snapshot.val();
                 if (data) {
                   data.forEach((dispo) => {
                     if (dispo.dispoHour == dispoHour) {
                       let newDispoPlayers = [];
+                      let playerNames = [];
                       dispo.dispoPlayers.forEach((dPlayers) => {
-                        if (
-                          dPlayers.dispo != reactionIndex &&
-                          dPlayers.players &&
-                          dPlayers.players.includes(user.mid)
-                        ) {
+
+                        if (dPlayers.dispo != reactionIndex && dPlayers.players && dPlayers.players.includes(user.mid)) {
                           newDispoPlayers = [];
+                          playerNames = [];
                           dPlayers.players.forEach((player) => {
                             if (player != user.mid) {
                               newDispoPlayers.push(player);
                             }
                           });
-
                           oldDispoIndex = dPlayers.dispo;
-                          console.log(
-                            "On supprime " +
-                              user.name +
-                              " pour la dispo " +
-                              dPlayers.dispo +
-                              " sur la war de " +
-                              dispoHour
-                          );
-                          let playerNames = [];
                           finalUsers.forEach((user) => {
                             newDispoPlayers.forEach((player) => {
                               if (player == user.mid) {
@@ -140,34 +119,11 @@ function writeDispo(reaction, user) {
                             players: newDispoPlayers,
                             playerNames: playerNames,
                           };
-                          set(
-                            ref(
-                              db,
-                              "/dispos/1643723546718/" +
-                                dispoIndex +
-                                "/dispoPlayers/" +
-                                oldDispoIndex
-                            ),
-                            newDispo
-                          );
+                          set(ref(db, "/dispos/1643723546718/" + dispoIndex + "/dispoPlayers/" + oldDispoIndex), newDispo);
                         }
-                        if (
-                          dPlayers.dispo == reactionIndex &&
-                          (!dPlayers.players ||
-                            !dPlayers.players.includes(user.mid))
-                        ) {
-
-                          console.log(
-                            "On ajoute " +
-                              user.name +
-                              " pour la dispo " +
-                              dPlayers.dispo +
-                              " sur la war de " +
-                              dispoHour
-                          );
-
+                        if (dPlayers.dispo == reactionIndex && (!dPlayers.players || !dPlayers.players.includes(user.mid))) {
                           newDispoPlayers.push(user.mid);
-                          let playerNames = [];
+                          playerNames = [];
                           finalUsers.forEach((user) => {
                             newDispoPlayers.forEach((player) => {
                               if (player == user.mid) {
@@ -180,36 +136,17 @@ function writeDispo(reaction, user) {
                             players: newDispoPlayers,
                             playerNames: playerNames,
                           };
-                          set(
-                            ref(
-                              db,
-                              "/dispos/1643723546718/" +
-                                dispoIndex +
-                                "/dispoPlayers/" +
-                                reactionIndex
-                            ),
-                            newDispo
-                          );
+                          set(ref(db, "/dispos/1643723546718/" + dispoIndex + "/dispoPlayers/" + reactionIndex ), newDispo);
                         }
                       });
-                     
-                     
                     }
                   });
                 }
-              },
-              {
-                onlyOnce: true,
-              }
-            );
+              }, { onlyOnce: true });
           }
         }
       }
-    },
-    {
-      onlyOnce: true,
-    }
-  );
+    }, { onlyOnce: true });
 }
 
 module.exports = {

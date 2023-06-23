@@ -1,23 +1,20 @@
 const Discord = require('discord.js');
 const { initializeApp } = require('firebase/app');
 const { getDatabase, ref, onValue } = require('firebase/database');
-
-let CommandsGuildMessage = new Discord.Collection();
-let client = null;
-
-//A mettre dans fichier env
 const firebaseConfig = {
-    apiKey: "AIzaSyBIH6XdclkrvXYGJzImA7wTA-vmU8n4_eI",
-    authDomain: "stats-mk.firebaseapp.com",
-    databaseURL: "https://stats-mk-default-rtdb.europe-west1.firebasedatabase.app",
-    projectId: "stats-mk",
-    storageBucket: "stats-mk.appspot.com",
-    messagingSenderId: "527204567365",
-    appId: "1:527204567365:web:32e2bbd5732d753f70162c",
-    measurementId: "G-MEKDPDHGT2"
+    apiKey: process.env.FIREBASE_API_KEY,
+    authDomain: process.env.FIREBASE_AUTH_DOMAIN,
+    databaseURL: process.env.FIREBASE_DB_URL,
+    projectId: process.env.FIREBASE_PROJECT_ID,
+    storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
+    appId: process.env.FIREBASE_APP_ID,
+    measurementId: process.env.FIREBASE_MEASUREMENT_ID
   };
 const app = initializeApp(firebaseConfig);
 const database = getDatabase(app)
+let CommandsGuildMessage = new Discord.Collection();
+let client = null;
 
 async function handleFirebaseEvent() {
     console.log('Listening fb dispos');
@@ -36,8 +33,6 @@ async function handleFirebaseEvent() {
                     } 
                 })
                 }
-              
-               
             });
             if (isFirstTime) {
                  CommandsGuildMessage.forEach((value) => {
@@ -52,7 +47,6 @@ module.exports = {
     Initialize: (discordClient) => {
         console.log('MessageHandler init...');
         client = discordClient;
-        if (client == null) throw "[COMMANDS] Client could not be loaded!";
         let command = require('../modules/ScheduleWar.js');
         CommandsGuildMessage.set(command.name, command);
         client.on('ready', handleFirebaseEvent);

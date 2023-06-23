@@ -14,7 +14,7 @@ async function handleReactions(reaction, user) {
             await reaction.fetch();
         }
         catch (error) {
-            return;
+            console.log(error)
         }
     }
 
