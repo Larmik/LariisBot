@@ -5,8 +5,23 @@ const express = require('express');
 const { VerifyDiscordRequest } = require('./utils.js');
 const app = express();
 const PORT = process.env.PORT || 3000;
+const {
+    InteractionType,
+    InteractionResponseType,
+    InteractionResponseFlags,
+    MessageComponentTypes,
+    ButtonStyleTypes,
+  } = require('discord-interactions');
 
 app.use(express.json({ verify: VerifyDiscordRequest(process.env.PUBLIC_KEY) }));
+
+app.post('/interactions', async function (req, res) {
+    const { type, id, data } = req.body;
+  
+    if (type === InteractionType.PING) {
+      return res.send({ type: InteractionResponseType.PONG });
+    }
+  });
 
 app.listen(PORT, () => {
     const client = new Discord.Client(

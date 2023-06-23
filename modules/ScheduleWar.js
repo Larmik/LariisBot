@@ -16,11 +16,12 @@ module.exports = {
                 channel
                     .send({ embeds: [scheduleEmbed] })
                     .then(newMessage => {
-                        fs.writeFile(process.env.DIR_WORKING + process.env.DIR_SPLIT + 'scheduleTemp' + process.env.DIR_SPLIT + '1121021754303852624' + process.env.DIR_SPLIT + channel.id + process.env.DIR_SPLIT 
-                        + newMessage.id + '.json', '{ "time": "' + time.dispoHour.toString() + '", "CAN": [], "CANT": [], "SUB": [], "NOTSURE": [], "DROPPED": [] }', (err) => { if (err) console.log(err); });
-                                            newMessage.react('✅').then(() => newMessage.react('❕')).then(() => newMessage.react('❔')).then(() => newMessage.react('❌'));
+                        fs.writeFile(
+                            process.env.DIR_WORKING + process.env.DIR_SPLIT + 'scheduleTemp' + process.env.DIR_SPLIT + '1121021754303852624' + process.env.DIR_SPLIT + channel.id + process.env.DIR_SPLIT + newMessage.id + '.json', 
+                            '{ "time": "' + time.dispoHour.toString() + '", "CAN": [], "CANT": [], "SUB": [], "NOTSURE": [], "DROPPED": [] }', (err) => { if (err) console.log(err); }
+                        );
+                        newMessage.react('✅').then(() => newMessage.react('❕')).then(() => newMessage.react('❔')).then(() => newMessage.react('❌'));
                     })    
-            
         }
     }
 }

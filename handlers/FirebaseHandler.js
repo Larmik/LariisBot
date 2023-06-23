@@ -27,22 +27,23 @@ async function handleFirebaseEvent() {
         if (data) {
             var isFirstTime = true;
             data.forEach(dispo => {
-                dispo.dispoPlayers.forEach(dispoPlayer => {
+                if (dispo.dispoPlayers) {
+                      dispo.dispoPlayers.forEach(dispoPlayer => {
                     if (dispoPlayer.players != undefined) {
-                        console.log(dispoPlayer.players);
                         isFirstTime = false
                         //TODO ajouter les réactions sur Discord
                         return;
                     } 
                 })
+                }
+              
                
             });
             if (isFirstTime) {
                  CommandsGuildMessage.forEach((value) => {
                     value.execute(data, client);
                 });
-            }
-           
+            } 
         }
     });
 }

@@ -9,8 +9,8 @@ function getData(message) {
 function writeData(message, data) {
     let rawdata = JSON.stringify(data);
     fs.writeFileSync(process.env.DIR_WORKING + process.env.DIR_SPLIT + 'scheduleTemp' + process.env.DIR_SPLIT + message.guild.id + process.env.DIR_SPLIT + message.channel.id + process.env.DIR_SPLIT + message.id + '.json', rawdata);
-    //TODO écrire les dispos sur firebase
 }
+
 
 function buildMessage(data) {
     let msgData = [];
@@ -195,7 +195,6 @@ module.exports = {
         else {
             let oldEntry = getExistingEntry(data, user.id);
             data = removeFromData(data, user, ['CANT', 'SUB', 'NOTSURE', 'DROPPED'], message);
-
             data.CAN.push({ 
                 name: user.username, 
                 id: user.id, 
@@ -348,7 +347,6 @@ module.exports = {
         writeData(message, data);
         message.edit({embeds: [buildMessage(data)]});
     },
-
     removeEntry: (message, user) => {
         let data = getData(message);
         data = removeFromData(data, user, ['CAN', 'CANT', 'SUB', 'NOTSURE', 'DROPPED'], message);

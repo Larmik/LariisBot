@@ -1,5 +1,4 @@
 const Discord = require('discord.js');
-const Helper = require('../modules/ReactionHelper');
 const Schedule = require('../modules/ScheduleReactions');
 
 let client = null;
@@ -24,10 +23,13 @@ async function handleReactions(reaction, user) {
             client.users.fetch(user.id, {cache: true})
             .then((loadedUser) => {
                 Schedule.HandleReaction(reaction, loadedUser);
-                Helper.RemoveReaction(reaction, loadedUser)
+                try {
+                    reaction.users.remove(loadedUser.id);
+                } catch (error) {
+                    console.log(error)
+                }
             });
-        }
-        
+        }    
     }
 }
 
