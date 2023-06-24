@@ -11,7 +11,7 @@ const firebaseConfig = {
   storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
   messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
   appId: process.env.FIREBASE_APP_ID,
-  measurementId: process.env.FIREBASE_MEASUREMENT_ID
+  measurementId: process.env.FIREBASE_MEASUREMENT_ID,
 };
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
@@ -38,7 +38,6 @@ function getData(message) {
  * @param {Discord.User} user
  */
 function writeDispo(reaction, user) {
-
   let msg = getData(reaction.message);
   let userDiscordId = user.id;
   let dispoHour = msg.time;
@@ -81,15 +80,19 @@ function writeDispo(reaction, user) {
       reactionIndex = 2;
       break;
   }
-  
-  onValue(ref(db, "/users"),(snapshot) => {
+
+  onValue(
+    ref(db, "/users"),
+    (snapshot) => {
       const obj = snapshot.val();
       if (obj) {
         for (let userId of Object.keys(obj)) {
           var user = obj[userId];
           finalUsers.push(user);
           if (user.discordId == userDiscordId) {
-            onValue(ref(db, "dispos/1643723546718"),(snapshot) => {
+            onValue(
+              ref(db, "dispos/1643723546718"),
+              (snapshot) => {
                 const data = snapshot.val();
                 if (data) {
                   data.forEach((dispo) => {
@@ -97,8 +100,11 @@ function writeDispo(reaction, user) {
                       let newDispoPlayers = [];
                       let playerNames = [];
                       dispo.dispoPlayers.forEach((dPlayers) => {
-
-                        if (dPlayers.dispo != reactionIndex && dPlayers.players && dPlayers.players.includes(user.mid)) {
+                        if (
+                          dPlayers.dispo != reactionIndex &&
+                          dPlayers.players &&
+                          dPlayers.players.includes(user.mid)
+                        ) {
                           newDispoPlayers = [];
                           playerNames = [];
                           dPlayers.players.forEach((player) => {
@@ -119,9 +125,22 @@ function writeDispo(reaction, user) {
                             players: newDispoPlayers,
                             playerNames: playerNames,
                           };
-                          set(ref(db, "/dispos/1643723546718/" + dispoIndex + "/dispoPlayers/" + oldDispoIndex), newDispo);
+                          set(
+                            ref(
+                              db,
+                              "/dispos/1643723546718/" +
+                                dispoIndex +
+                                "/dispoPlayers/" +
+                                oldDispoIndex
+                            ),
+                            newDispo
+                          );
                         }
-                        if (dPlayers.dispo == reactionIndex && (!dPlayers.players || !dPlayers.players.includes(user.mid))) {
+                        if (
+                          dPlayers.dispo == reactionIndex &&
+                          (!dPlayers.players ||
+                            !dPlayers.players.includes(user.mid))
+                        ) {
                           newDispoPlayers.push(user.mid);
                           playerNames = [];
                           finalUsers.forEach((user) => {
@@ -136,17 +155,30 @@ function writeDispo(reaction, user) {
                             players: newDispoPlayers,
                             playerNames: playerNames,
                           };
-                          set(ref(db, "/dispos/1643723546718/" + dispoIndex + "/dispoPlayers/" + reactionIndex ), newDispo);
+                          set(
+                            ref(
+                              db,
+                              "/dispos/1643723546718/" +
+                                dispoIndex +
+                                "/dispoPlayers/" +
+                                reactionIndex
+                            ),
+                            newDispo
+                          );
                         }
                       });
                     }
                   });
                 }
-              }, { onlyOnce: true });
+              },
+              { onlyOnce: true }
+            );
           }
         }
       }
-    }, { onlyOnce: true });
+    },
+    { onlyOnce: true }
+  );
 }
 
 module.exports = {
@@ -165,16 +197,16 @@ module.exports = {
     }
     switch (reaction.emoji.name) {
       case "✅":
-        Schedule.addCan(reaction.message, user);
+        Schedule.addCan(reaction.message, user, true);
         break;
       case "❌":
-        Schedule.addCant(reaction.message, user);
+        Schedule.addCant(reaction.message, user, true);
         break;
       case "❕":
-        Schedule.addSub(reaction.message, user);
+        Schedule.addSub(reaction.message, user, true);
         break;
       case "❔":
-        Schedule.addNotSure(reaction.message, user);
+        Schedule.addNotSure(reaction.message, user, true);
         break;
       case "♿":
         Schedule.removeEntry(reaction.message, user);
