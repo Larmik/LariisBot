@@ -20,28 +20,27 @@ let CommandsGuildMessage = new Discord.Collection();
 let client = null;
 
 async function handleFirebaseEvent() {
-  console.log("Listening fb dispos");
   const disposRef = ref(database, "dispos/1643723546718");
   const channel = client.channels.cache.find(
     (channel) => channel.id === process.env.CHANNEL_ID
   );
   onValue(disposRef, (snapshot) => {
     const data = snapshot.val();
+    //A chaque fois que les datas sont modifiées, si elles existent
     if (data) {
       var isFirstTime = true;
       data.forEach((dispo) => {
         if (dispo.dispoPlayers) {
           dispo.dispoPlayers.forEach((dispoPlayer) => {
+            //Si des joueurs ont déjà précisé leurs dispos pour la dispo en cours, on va chercher l'ID du DiscordMessage correspondant
             if (dispoPlayer.players != undefined) {
               isFirstTime = false;
               let scheduleDir = fs.readdirSync(
                 process.env.DIR_WORKING +
                   process.env.DIR_SPLIT +
-                  "scheduleTemp" +
-                  process.env.DIR_SPLIT +
                   process.env.GUILD_ID +
                   process.env.DIR_SPLIT +
-                  channel.id
+                  process.env.CHANNEL_ID
               );
               let scheduleFile;
               switch (dispo.dispoHour) {
@@ -63,11 +62,13 @@ async function handleFirebaseEvent() {
                 default:
                   break;
               }
+              //On va chercher le FirebaseUser avec son ID et on vérifie si il a un DiscordID
               dispoPlayer.players.forEach((player) => {
-                get(ref(database, "/users/" + player)).then((snapshot) => {
+                onValue(ref(database, "/users/" + player), (snapshot) => {
                   const fbUser = snapshot.val();
                   channel.messages.fetch(scheduleFile).then((message) => {
                     if (fbUser.discordId) {
+                      //On ajoute la bonne dispo sur Discord en veillant à ne pas écraser la db
                       client.users.fetch(fbUser.discordId).then((user) => {
                         switch (dispoPlayer.dispo) {
                           case 0:
@@ -88,38 +89,48 @@ async function handleFirebaseEvent() {
                       });
                     }
                   });
-                });
+                },
+                { onlyOnce: true })
               });
               return;
             }
           });
+          //Si la lineup est validée, ping Discord
+          if (dispo.lineUp && dispo.opponentName) {
+            var luMessage = dispo.dispoHour.toString() + 'h vs ' + dispo.opponentName + '\n \n';
+                dispo.lineUp.forEach(item => {
+                    luMessage += '<@' + item.userDiscordId + '> \n'
+                });
+                if (dispo.hostName) {
+                  luMessage += '\n Host: ' + dispo.hostName
+                }
+                channel.send(luMessage);
+          }
         }
       });
+      //Si les dispos vienent d'être publiées, envoyer sur Discord
       if (isFirstTime) {
         CommandsGuildMessage.forEach((value) => {
           value.execute(data, client);
         });
       }
     } else {
+      //Si les données n'existent pas (reset) et que le dossier cache existe, le supprimer
       if (
         fs.existsSync(
           process.env.DIR_WORKING +
             process.env.DIR_SPLIT +
-            "scheduleTemp" +
-            process.env.DIR_SPLIT +
             process.env.GUILD_ID +
             process.env.DIR_SPLIT +
-            channel.id
+            process.env.CHANNEL_ID
         )
       ) {
         fs.unlinkSync(
           process.env.DIR_WORKING +
             process.env.DIR_SPLIT +
-            "scheduleTemp" +
-            process.env.DIR_SPLIT +
             process.env.GUILD_ID +
             process.env.DIR_SPLIT +
-            channel.id
+            process.env.CHANNEL_ID
         );
       }
     }

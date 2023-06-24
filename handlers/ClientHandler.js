@@ -17,14 +17,14 @@ module.exports = {
   Initialize: (discordClient) => {
     client = discordClient;
 
-    // Create necessary folder(s)
+    //Création du dossier de stockage des dispos Discord
     if (
       !fs.existsSync(
-        process.env.DIR_WORKING + process.env.DIR_SPLIT + "scheduleTemp"
+        process.env.DIR_WORKING + process.env.DIR_SPLIT 
       )
     ) {
       fs.mkdir(
-        process.env.DIR_WORKING + process.env.DIR_SPLIT + "scheduleTemp",
+        process.env.DIR_WORKING + process.env.DIR_SPLIT,
         { recursive: true },
         (err) => {}
       );
@@ -33,15 +33,11 @@ module.exports = {
       !fs.existsSync(
         process.env.DIR_WORKING +
           process.env.DIR_SPLIT +
-          "scheduleTemp" +
-          process.env.DIR_SPLIT +
           process.env.GUILD_ID
       )
     ) {
       fs.mkdir(
         process.env.DIR_WORKING +
-          process.env.DIR_SPLIT +
-          "scheduleTemp" +
           process.env.DIR_SPLIT +
           process.env.GUILD_ID,
         { recursive: true },
@@ -52,8 +48,6 @@ module.exports = {
       !fs.existsSync(
         process.env.DIR_WORKING +
           process.env.DIR_SPLIT +
-          "scheduleTemp" +
-          process.env.DIR_SPLIT +
           process.env.GUILD_ID +
           process.env.DIR_SPLIT +
           process.env.CHANNEL_ID
@@ -61,8 +55,6 @@ module.exports = {
     ) {
       fs.mkdir(
         process.env.DIR_WORKING +
-          process.env.DIR_SPLIT +
-          "scheduleTemp" +
           process.env.DIR_SPLIT +
           process.env.GUILD_ID +
           process.env.DIR_SPLIT +

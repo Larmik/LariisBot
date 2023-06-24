@@ -15,11 +15,9 @@ module.exports = {
         fs.writeFile(
           process.env.DIR_WORKING +
             process.env.DIR_SPLIT +
-            "scheduleTemp" +
-            process.env.DIR_SPLIT +
             process.env.GUILD_ID +
             process.env.DIR_SPLIT +
-            channel.id +
+            process.env.CHANNEL_ID +
             process.env.DIR_SPLIT +
             newMessage.id +
             ".json",
