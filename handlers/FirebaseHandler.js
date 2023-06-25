@@ -114,6 +114,7 @@ async function handleFirebaseEvent() {
         CommandsGuildMessage.forEach((value) => {
           value.execute(data, client);
         });
+        channel.send('<@' + 'DiscordIDMemberRole' + '> ' + '<@' + 'DiscordIdTestRole' + '>')
       }
     } else {
       //Si les données n'existent pas (reset) et que le dossier cache existe, nettoyer les messages et le supprimer
