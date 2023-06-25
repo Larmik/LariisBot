@@ -4,8 +4,6 @@ function getData(message) {
   let rawdata = fs.readFileSync(
     process.env.DIR_WORKING +
       process.env.DIR_SPLIT +
-      "scheduleTemp" +
-      process.env.DIR_SPLIT +
       process.env.GUILD_ID +
       process.env.DIR_SPLIT +
       process.env.CHANNEL_ID +
@@ -20,8 +18,6 @@ function writeData(message, data) {
   let rawdata = JSON.stringify(data);
   fs.writeFileSync(
     process.env.DIR_WORKING +
-      process.env.DIR_SPLIT +
-      "scheduleTemp" +
       process.env.DIR_SPLIT +
       process.env.GUILD_ID +
       process.env.DIR_SPLIT +

@@ -110,31 +110,44 @@ async function handleFirebaseEvent() {
       });
       //Si les dispos vienent d'être publiées, envoyer sur Discord
       if (isFirstTime) {
+        clearChat(channel, 1)
         CommandsGuildMessage.forEach((value) => {
           value.execute(data, client);
         });
       }
     } else {
-      //Si les données n'existent pas (reset) et que le dossier cache existe, le supprimer
-      if (
-        fs.existsSync(
-          process.env.DIR_WORKING +
-            process.env.DIR_SPLIT +
-            process.env.GUILD_ID +
-            process.env.DIR_SPLIT +
-            process.env.CHANNEL_ID
-        )
-      ) {
-        fs.unlinkSync(
-          process.env.DIR_WORKING +
-            process.env.DIR_SPLIT +
-            process.env.GUILD_ID +
-            process.env.DIR_SPLIT +
-            process.env.CHANNEL_ID
-        );
-      }
+      //Si les données n'existent pas (reset) et que le dossier cache existe, nettoyer les messages et le supprimer
+      clearChat(channel, 10);
+      channel.send("Les dispos du jour ne sont pas encore disponibles. Reviens plus tard !")
+      deleteFolder(
+        process.env.DIR_WORKING +
+        process.env.DIR_SPLIT +
+        process.env.GUILD_ID +
+        process.env.DIR_SPLIT +
+        process.env.CHANNEL_ID
+      )
     }
   });
+}
+function deleteFolder(path) {
+ if( fs.existsSync(path) ) {
+            fs.readdirSync(path).forEach(function(file) {
+              var curPath = path + "/" + file;
+                if(fs.lstatSync(curPath).isDirectory()) { // recurse
+                    deleteFolder(curPath);
+                } else { // delete file
+                    fs.unlinkSync(curPath);
+                }
+            });
+          }
+}
+
+async function clearChat (channel, numb) {
+    const messageManager = channel.messages;
+    const messages = await messageManager.channel.messages.fetch({ limit: numb });
+    console.log("deleting chat")
+    channel.bulkDelete(messages,true);
+
 }
 
 module.exports = {
