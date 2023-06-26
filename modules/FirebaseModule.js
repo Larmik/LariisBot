@@ -89,20 +89,21 @@ module.exports = {
                                 break;
                             }
                             if (dispo.dispoHour == dispoHour) {
-                              let newDispoPlayers = [];
+                              let players = [];
                               let playerNames = [];
                               dispo.dispoPlayers.forEach((dPlayers) => {
                                 if (dPlayers.dispo != reactionIndex && dPlayers.players && dPlayers.players.includes(user.mid)) {
-                                  newDispoPlayers = [];
+                                  oldDispoIndex = dPlayers.dispo;
+                                  console.log("Player " + user.name + " has remove his dispo for " + oldDispoIndex)
+                                  players = [];
                                   playerNames = [];
                                   dPlayers.players.forEach((player) => {
                                     if (player != user.mid) {
-                                      newDispoPlayers.push(player);
+                                      players.push(player);
                                     }
                                   });
-                                  oldDispoIndex = dPlayers.dispo;
                                   finalUsers.forEach((user) => {
-                                    newDispoPlayers.forEach((player) => {
+                                    players.forEach((player) => {
                                       if (player == user.mid) {
                                         playerNames.push(user.name);
                                       }
@@ -110,30 +111,35 @@ module.exports = {
                                   });
                                   let newDispo = {
                                     dispo: oldDispoIndex,
-                                    players: newDispoPlayers,
+                                    players: players,
                                     playerNames: playerNames,
                                   };
                                   set(ref(database,"/dispos/1643723546718/" + dispoIndex + "/dispoPlayers/" + oldDispoIndex), newDispo);
                                 }
                                 if (dPlayers.dispo == reactionIndex && (!dPlayers.players || !dPlayers.players.includes(user.mid))) {
-                                  newDispoPlayers.push(user.mid);
+                                  console.log("Player " + user.name + " has added his dispo for " + reactionIndex)
+                                  players = [];
                                   playerNames = [];
+                                  dPlayers.players.forEach((player) => {
+                                      players.push(player);
+                                  });
                                   finalUsers.forEach((user) => {
-                                    newDispoPlayers.forEach((player) => {
+                                    players.forEach((player) => {
                                       if (player == user.mid) {
                                         playerNames.push(user.name);
                                       }
                                     });
                                   });
+                                  players.push(user.mid)
+                                  playerNames.push(user.name)
                                   let newDispo = {
                                     dispo: reactionIndex,
-                                    players: newDispoPlayers,
+                                    players: players,
                                     playerNames: playerNames,
                                   };
                                   set(ref(database,"/dispos/1643723546718/" + dispoIndex + "/dispoPlayers/" + reactionIndex), newDispo);
                                 }
                               });
-                              Message.updateMessage(reaction.message, dispo);
                             }
                           });
                         }
@@ -156,14 +162,15 @@ module.exports = {
           data.forEach((dispo) => {
             //Si des membres on ajouté ou retiré leurs dispos
             if (dispo.dispoPlayers) {
+              let dispoFile = JSON.parse(fs.readFileSync(process.env.MESSAGES_ID_FILE_PATH));
+              let dispoMessageId = dispoFile.find(({hour}) => hour === dispo.dispoHour.toString()).messageId;
+              channel.messages.fetch(dispoMessageId).then((message) => {
+                console.log("FBModule 175")
+                Message.updateMessage(message, dispo)
+              });              
               dispo.dispoPlayers.forEach((dispoPlayer) => {
                 if (dispoPlayer.players != undefined) {
                   isFirstTime = false;
-                  let dispoFile = JSON.parse(fs.readFileSync(process.env.MESSAGES_ID_FILE_PATH));
-                  let dispoMessageId = dispoFile.find(({hour}) => hour === dispo.dispoHour.toString()).messageId;
-                  channel.messages.fetch(dispoMessageId).then((message) => {
-                    Message.updateMessage(message, dispo)
-                  });              
                   return;
                 }
               });
