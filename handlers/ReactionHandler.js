@@ -3,7 +3,7 @@ let client = null;
 
 async function handleReactions(reaction, user) {
     if (reaction.partial) {
-        try { await reaction.fetch(); } catch (error) { console.log(error); }
+        try { await reaction.fetch(); } catch (error) { }
     }
     if (!user.bot && user.id != process.env.BOT_ID && reaction.message.author.id == process.env.BOT_ID) {
         if (reaction.message.embeds && reaction.message.embeds[0] && reaction.message.embeds[0].title.startsWith('**Dispos')) {
@@ -11,7 +11,7 @@ async function handleReactions(reaction, user) {
             .fetch(user.id, {cache: true})
             .then((loadedUser) => {
                 Schedule.HandleReaction(reaction, loadedUser);
-                try { reaction.users.remove(loadedUser.id); } catch (error) { console.log(error); }
+                try { reaction.users.remove(loadedUser.id); } catch (error) { }
             });
         }    
     }
@@ -19,9 +19,7 @@ async function handleReactions(reaction, user) {
 
 module.exports = {
     Initialize: (discordClient) => {
-        console.log('ReactionHandler init...');
         client = discordClient;
-        if (client == null) throw "[REACTIONS] Client could not be loaded!";
         client.on('messageReactionAdd', handleReactions);
     }
 }

@@ -161,7 +161,6 @@ module.exports = {
                   isFirstTime = false;
                   let dispoFile = JSON.parse(fs.readFileSync(process.env.MESSAGES_ID_FILE_PATH));
                   let dispoMessageId = dispoFile.find(({hour}) => hour === dispo.dispoHour.toString()).messageId;
-                  console.log(dispoMessageId)
                   channel.messages.fetch(dispoMessageId).then((message) => {
                     Message.updateMessage(message, dispo)
                   });              

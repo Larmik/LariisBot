@@ -10,7 +10,6 @@ async function handleFirebaseEvent() {
 
 module.exports = {
   Initialize: (discordClient) => {
-    console.log("FirebaseHandler init...");
     client = discordClient;
     client.on("ready", handleFirebaseEvent);
   },

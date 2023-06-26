@@ -3,7 +3,6 @@ const fs = require("fs");
 
 
 function buildMessage(dispo) {
-  console.log(dispo)
     let msgData = [];
     let canCount = 0;
     
@@ -91,9 +90,7 @@ module.exports = {
             fs.writeFile(
               process.env.MESSAGES_ID_FILE_PATH,
               messagesId,
-              (err) => {
-                if (err) console.log(err);
-              }
+              (err) => {  }
             );
           }
           newMessage
