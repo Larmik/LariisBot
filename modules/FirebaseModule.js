@@ -161,19 +161,20 @@ module.exports = {
           var isFirstTime = true;
           data.forEach((dispo) => {
             //Si des membres on ajouté ou retiré leurs dispos
-            if (dispo.dispoPlayers) {
-              let dispoFile = JSON.parse(fs.readFileSync(process.env.MESSAGES_ID_FILE_PATH));
-              let dispoMessageId = dispoFile.find(({hour}) => hour === dispo.dispoHour.toString()).messageId;
-              channel.messages.fetch(dispoMessageId).then((message) => {
-                console.log("FBModule 175")
-                Message.updateMessage(message, dispo)
-              });              
+            if (dispo.dispoPlayers) {  
               dispo.dispoPlayers.forEach((dispoPlayer) => {
                 if (dispoPlayer.players != undefined) {
                   isFirstTime = false;
+                  let dispoFile = JSON.parse(fs.readFileSync(process.env.MESSAGES_ID_FILE_PATH));
+                  let dispoMessageId = dispoFile.find(({hour}) => hour === dispo.dispoHour.toString()).messageId;
+                  channel.messages.fetch(dispoMessageId).then((message) => {
+                    console.log("FBModule 175")
+                    Message.updateMessage(message, dispo)
+                  });   
                   return;
                 }
               });
+           
               //Si la lineup est validée, ping Discord
               if (dispo.lineUp && dispo.opponentName) {
                 var luMessage = dispo.dispoHour.toString() + 'h vs ' + dispo.opponentName + '\n \n';
