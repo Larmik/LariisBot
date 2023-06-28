@@ -28,10 +28,14 @@ function deleteFolder(path) {
   }
 }
 
-async function clearChat(channel, numb) {
-  const messageManager = channel.messages;
-  const messages = await messageManager.channel.messages.fetch({ limit: numb });
-  channel.bulkDelete(messages, true);
+async function clearChat(channel) {
+  channel.messages.fetch().then(messages => {
+    if (messages) {
+         channel.bulkDelete(messages, true)
+    }
+  })
+ 
+ 
 }
 
 module.exports = {
@@ -193,8 +197,48 @@ module.exports = {
       { onlyOnce: true }
     );
   },
+  createFile: (channel) => {
+    onValue(ref(database, "dispos/1643723546718"), (snapshot) => {
+      const data = snapshot.val();
+      //A chaque fois que les datas sont modifiées, si elles existent
+      if (data) {
+        var isFirstTime = true
+        data.forEach((dispo) => {
+          //Si des membres on ajouté ou retiré leurs dispos
+          if (dispo.dispoPlayers) {
+         
+            dispo.dispoPlayers.forEach((dispoPlayer) => {
+              if (dispoPlayer.players != undefined) {
+                isFirstTime = false;
+                return;
+              }
+            });
+        
+          }
+        });
+     
+ 
+          
+        if (isFirstTime) {
+            clearChat(channel);
+            Message.createEmbbedMessages(data, channel);
+            channel.send(
+              "<@" +
+                process.env.MEMBER_ROLE_ID +
+                "> " +
+                "<@" +
+                process.env.TEST_ROLE_ID +
+                ">"
+            )
+        }
+        
+          
+        
+      } 
+    });
+  },
 
-  handleDispos: (channel, dispoIndex) => {
+  handleDispos: (channel, dispoIndex, showFirstMessage) => {
     onValue(ref(database, "dispos/1643723546718/" + dispoIndex), (snapshot) => {
       const dispo = snapshot.val();
       //A chaque fois que les datas sont modifiées, si elles existent
@@ -202,20 +246,23 @@ module.exports = {
         var isFirstTime = true;
         //Si des membres on ajouté ou retiré leurs dispos
         if (dispo.dispoPlayers) {
-          let dispoFile = JSON.parse(
-            fs.readFileSync(process.env.MESSAGES_ID_FILE_PATH)
-          );
-          let dispoMessageId = dispoFile.find(
-            ({ hour }) => hour === dispo.dispoHour.toString()
-          ).messageId;
+          let dispoFile;
+          let dispoMessageId;
           dispo.dispoPlayers.forEach((dispoPlayer) => {
             if (dispoPlayer.players != undefined) {
               isFirstTime = false;
-            }
-          });
-          channel.messages.fetch(dispoMessageId).then((message) => {
+                dispoFile = JSON.parse(
+            fs.readFileSync(process.env.MESSAGES_ID_FILE_PATH)
+          );
+                dispoMessageId = dispoFile.find(
+            ({ hour }) => hour === dispo.dispoHour.toString()
+          ).messageId;
+                  channel.messages.fetch(dispoMessageId).then((message) => {
             Message.updateMessage(message, dispo);
           });
+            }
+          });
+        
 
           //Si la lineup est validée, ping Discord
           if (dispo.lineUp && dispo.opponentName) {
@@ -233,23 +280,10 @@ module.exports = {
             channel.send(luMessage);
           }
         }
-        //Si les dispos vienent d'être publiées, envoyer sur Discord
-        if (isFirstTime) {
-          clearChat(channel, 1);
-          Message.createEmbbedMessages(data, channel);
-          channel.send(
-            "<@" +
-              process.env.MEMBER_ROLE_ID +
-              "> " +
-              "<@" +
-              process.env.TEST_ROLE_ID +
-              ">"
-          );
-        }
-      } else {
+      } else if (showFirstMessage) {
         //Si les données n'existent pas (reset) et que le dossier cache existe, nettoyer les messages et le supprimer
-        clearChat(channel, 10);
-        channel.send(
+        clearChat(channel);
+         channel.send(
           "Les dispos du jour ne sont pas encore disponibles. Reviens plus tard !"
         );
         deleteFolder(process.env.MESSAGES_ID_DIR_PATH);

@@ -87,11 +87,11 @@ module.exports = {
             messagesId += ', '
           } else {
             messagesId += ' ]'
-            fs.writeFile(
-              process.env.MESSAGES_ID_FILE_PATH,
-              messagesId,
-              (err) => {  }
-            );
+          fs.writeFile(
+            process.env.MESSAGES_ID_FILE_PATH,
+            messagesId,
+            (err) => {  }
+          );
           }
           newMessage
             .react("✅")
