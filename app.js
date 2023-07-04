@@ -28,5 +28,5 @@ app.listen(process.env.PORT, () => {
       });
       ClientHandler.Initialize(client);
       ClientHandler.Login();
-      console.log('Listening on port', process.env.PORT);
+      console.log("En train d'écouter les dispos...");
 });

@@ -223,10 +223,10 @@ module.exports = {
             clearChat(channel);
             Message.createEmbbedMessages(data, channel);
             channel.send(
-              "<@" +
+              "<@&" +
                 process.env.MEMBER_ROLE_ID +
                 "> " +
-                "<@" +
+                "<@&" +
                 process.env.TEST_ROLE_ID +
                 ">"
             )
