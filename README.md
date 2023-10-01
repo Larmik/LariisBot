@@ -7,7 +7,7 @@ LariisBot est un bot Discord conçu pour communiquer les dispos des équipes MK 
 ### Renseignement des dispos
 
 1. Lors de la publication des dispos par l'application tous les matins, la saisie des dispos sera simultanément ouverte sur le channel Discord dédié.
-2. Les horaires par défaut des dispos sont 18h, 20h, 21h, 22h et 23h
+2. Les horaires par défaut des dispos sont 18h, 19h, 20h, 21h, 22h et 23h
 3. Lorsque vous rentrez vos dispos sur le channel Discord, elles sont répliquées automatiquement dans l'application.
 4. Vous pouvez désormais également rentrer vos dispos dans l'application et elles se répliqueront dans le channel Discord.
 
