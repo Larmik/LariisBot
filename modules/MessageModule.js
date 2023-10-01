@@ -1,7 +1,6 @@
 const Discord = require("discord.js");
 const fs = require("fs");
 
-
 function buildMessage(dispo) {
     let msgData = [];
     let canCount = 0;
@@ -57,7 +56,6 @@ function buildMessage(dispo) {
         value: cantStr,
       });
     }
-
   
     return {
       title:

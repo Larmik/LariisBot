@@ -10,8 +10,8 @@ async function handleFirebaseEvent() {
   Firebase.handleDispos(channel, 1, false);
   Firebase.handleDispos(channel, 2, false);
   Firebase.handleDispos(channel, 3, false);
-  Firebase.handleDispos(channel, 4, true);
-
+  Firebase.handleDispos(channel, 4, false);
+  Firebase.handleDispos(channel, 5, true);
 }
 
 module.exports = {

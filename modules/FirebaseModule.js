@@ -69,17 +69,20 @@ module.exports = {
       case "18":
         dispoIndex = "0";
         break;
-      case "20":
+      case "19":
         dispoIndex = "1";
         break;
-      case "21":
+      case "20":
         dispoIndex = "2";
         break;
-      case "22":
+      case "21":
         dispoIndex = "3";
         break;
-      case "23":
+      case "22":
         dispoIndex = "4";
+        break;
+      case "23":
+        dispoIndex = "5";
         break;
       default:
         break;
@@ -95,7 +98,6 @@ module.exports = {
           }
           finalUsers.forEach(fbUser => {
             if (fbUser.discordId == user.id) {
-
             onValue(
               ref(database, "dispos/1643723546718/" + dispoIndex),
               (snapshot) => {
@@ -216,9 +218,6 @@ module.exports = {
         
           }
         });
-     
- 
-          
         if (isFirstTime) {
             clearChat(channel);
             Message.createEmbbedMessages(data, channel);
@@ -230,10 +229,7 @@ module.exports = {
                 process.env.TEST_ROLE_ID +
                 ">"
             )
-        }
-        
-          
-        
+        }        
       } 
     });
   },
@@ -262,7 +258,6 @@ module.exports = {
           });
             }
           });
-        
 
           //Si la lineup est validée, ping Discord
           if (dispo.lineUp && dispo.opponentName) {
