@@ -3,14 +3,14 @@ const { getDatabase, ref, onValue, set } = require("firebase/database");
 const Message = require("./MessageModule");
 const fs = require("fs");
 const firebaseConfig = {
-  apiKey: process.env.FIREBASE_API_KEY,
-  authDomain: process.env.FIREBASE_AUTH_DOMAIN,
-  databaseURL: process.env.FIREBASE_DB_URL,
-  projectId: process.env.FIREBASE_PROJECT_ID,
-  storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.FIREBASE_APP_ID,
-  measurementId: process.env.FIREBASE_MEASUREMENT_ID,
+ apiKey: "AIzaSyBQWV1OoWnqmlyL2yO9A0m9zS5NEMM_3y4",
+  authDomain: "stats-mkworld.firebaseapp.com",
+  databaseURL: "https://stats-mkworld-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "stats-mkworld",
+  storageBucket: "stats-mkworld.firebasestorage.app",
+  messagingSenderId: "566035259986",
+  appId: "1:566035259986:web:3282dc101628e698ebf58b",
+  measurementId: "G-PG9F42750R"
 };
 const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
