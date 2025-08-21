@@ -1,6 +1,7 @@
 
 # Config file
 config.json
+apphosting.yaml
 scheduleTemp
 .env
 
