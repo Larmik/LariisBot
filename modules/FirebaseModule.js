@@ -3,7 +3,7 @@ const { getDatabase, ref, onValue, set } = require("firebase/database");
 const Message = require("./MessageModule");
 const fs = require("fs");
 const firebaseConfig = {
-  apiKey: "FIREBASE_API_KEY",
+  apiKey: process.env.FIREBASE_API_KEY,
   authDomain: process.env.FIREBASE_AUTH_DOMAIN,
   databaseURL: process.env.FIREBASE_DB_URL,
   projectId: process.env.FIREBASE_PROJECT_ID,

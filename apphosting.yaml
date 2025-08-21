@@ -12,8 +12,6 @@ runConfig:
 env:
   # Configure environment variables.
   # See https://firebase.google.com/docs/app-hosting/configure#user-defined-environment
-  - variable: CLIENT_TOKEN
-    value: MTEyMTAwNzk0MjE3MTM3Nzc0Ng.G4cD87.0gWQKECYR1QTlqWHZSr1myQPxvfFZmsD6Tu894
   - variable: PREFIX
     value: _
   - variable: BOT_ID
@@ -21,7 +19,7 @@ env:
   - variable: PUBLIC_KEY
     value: 74cb00b3da2edb44aba19459ca9543e4e04fc4dc0a6ca331c34e489aeb081ab8
   - variable: FIREBASE_API_KEY
-    value: AIzaSyBQWV1OoWnqmlyL2yO9A0m9zS5NEMM_3y4
+    secret: AIzaSyBQWV1OoWnqmlyL2yO9A0m9zS5NEMM_3y4
   - variable: FIREBASE_AUTH_DOMAIN
     value: stats-mkworld.firebaseapp.com
   - variable: FIREBASE_DB_URL
