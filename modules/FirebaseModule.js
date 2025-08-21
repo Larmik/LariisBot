@@ -99,7 +99,7 @@ module.exports = {
           finalUsers.forEach(fbUser => {
             if (fbUser.discordId == user.id) {
             onValue(
-              ref(database, "dispos/1643723546718/" + dispoIndex),
+              ref(database, "dispos/874/" + dispoIndex),
               (snapshot) => {
                 const dispo = snapshot.val();
                 if (dispo) {
@@ -142,7 +142,7 @@ module.exports = {
                       set(
                         ref(
                           database,
-                          "/dispos/1643723546718/" +
+                          "/dispos/874/" +
                             dispoIndex +
                             "/dispoPlayers/" +
                             oldDispoIndex
@@ -178,7 +178,7 @@ module.exports = {
                       set(
                         ref(
                           database,
-                          "/dispos/1643723546718/" +
+                          "/dispos/874/" +
                             dispoIndex +
                             "/dispoPlayers/" +
                             reactionIndex
@@ -200,7 +200,7 @@ module.exports = {
     );
   },
   createFile: (channel) => {
-    onValue(ref(database, "dispos/1643723546718"), (snapshot) => {
+    onValue(ref(database, "dispos/874"), (snapshot) => {
       const data = snapshot.val();
       //A chaque fois que les datas sont modifiées, si elles existent
       if (data) {
@@ -235,7 +235,7 @@ module.exports = {
   },
 
   handleDispos: (channel, dispoIndex, showFirstMessage) => {
-    onValue(ref(database, "dispos/1643723546718/" + dispoIndex), (snapshot) => {
+    onValue(ref(database, "dispos/874/" + dispoIndex), (snapshot) => {
       const dispo = snapshot.val();
       //A chaque fois que les datas sont modifiées, si elles existent
       if (dispo) {
